@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    /* transition: all 0.4s ease; */
+   
+   
+}
+
+
+
+:root {
+    --body-color: #2d2e32;
+    --nav-color: #2d2e32;
+    --side-nav: #e2e3e6;
+    --text-color: #FFF;
+    --search-text: #010718;
+    
+}
+
+body {
+    height: 100vh;
+    background-color: var(--body-color);
+}
+
+body.dark {
+    --body-color: #18191A;
+    --nav-color: #242526;
+    --side-nav: #242526;
+    --text-color: #CCC;
+}
+
+/* header-section */
+
+/* Your existing CSS code for the navbar goes here */
+
+.header-section {
+    display: flex;
+    /* margin-top: 100px; */
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.left-section img {
+    max-width: 100%;
+    height: auto;
+}
+
+.right-section {
+    width: 60%;
+    padding-left: 20px;
+}
+
+.left-section {
+    width: 40%;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    /* Add this line */
+}
+
+.left-section img {
+    max-width: 100%;
+    height: auto;
+}
+
+.intro h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.main-text h1 {
+    font-size: 86px;
+    line-height: 1.2;
+    color: #fff;
+    margin-bottom: 20px;
+    font-family: monospace;
+}
+
+.paragraph p {
+    font-size: 16px;
+    color: #fff;
+    margin-bottom: 30px;
+}
+
+.contact-button a {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    background-color: #ffaf29;
+    color: #25262a;
+    border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+    .header-section {
+        flex-direction: column;
+    }
+
+    .left-section,
+    .right-section {
+        width: 100%;
+    }
+
+    .right-section {
+        padding: 0;
+        text-align: center;
+    }
+}
+.cv-button a {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    background-color: #ffaf29;
+    color: #25262a;
+    border-radius: 5px;
+}
+.social-icons {
+    display: flex;
+    gap: 15px;
+}
+
+.social-icons a {
+    color: #000; /* Default color, change as needed */
+    text-decoration: none;
+    font-size: 24px; /* Adjust size as needed */
+}
+
+.social-icons a:hover {
+    color: #007bff; 
+}
