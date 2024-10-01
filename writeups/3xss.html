@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Laralink">
+    <title>Swilam's night - 3 XSS</title>
+    <link rel="icon" href="/assets/img/favicon.png" />
+    <link rel="stylesheet" href="/assets/css/fontawesome.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.rtl.min.css"
+        integrity="sha384-gXt9imSW0VcJVHezoNQsP+TNrjYXoGcrqBZJpry9zJt8PCQjobwmhMGaDHTASo9N" crossorigin="anonymous">
+    <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+
+<body>
+
+    <div class="st-height-b100 st-height-lg-b80"></div>
+    <div class="container">
+        <div class="st-section-heading st-style1">
+            <h4 class="st-section-heading-title">3 ثغرات XSS في صفحة واحدة</h4>
+            <h2 class="st-section-heading-subtitle">3 ثغرات XSS في صفحة واحدة</h2>
+            <br><br><br>
+            <h5>السلام على من إتبع الهدي، و أشهد أن لا إله إلا الله و أن محمداً عبده ورسوله.</h5>
+            <h5>انا محمد حماد (سويلم)، مكتشف ثغرات نوب, فلاح كبير قد الدنيا, بحاول نوعا ما اكون سبب ف إستقلال المجتمع العربي في مجال أمن المعلومات.</h5>
+            <hr><hr><hr><hr><hr><hr>
+        </div>
+        <div class="st-height-b25 st-height-lg-b25"></div>
+    </div>
+
+    <div class="container">
+
+        <h4>
+            الحمدلله قدرت إني أكتشف 3 ثغرات 
+            XSS 
+            في برنامج من نوع 
+            VDP 
+            علي منصة 
+            HackerOne.
+            <br>
+            هنقسم المقاله لكذا نقطه:
+        </h4>
+        <ul style="padding-right: 50px;">
+            <li>جمع المعلومات</li>
+            <li>اكتشاف نقطة الضعف</li>
+            <li>اختبار الثغرة</li>
+        </ul>
+        <br><hr><br>
+        <h2>1. جمع المعلومات</h2>
+        <div style="padding-right: 20px;">
+            <h5>
+                كأي شخص اول حاجه بيعملها هي إنه يجمع نطاقات فرعيه
+                (Subdomains)
+                كتير عشان يزود من مساحة الهجوم بتاعته و يزيد من إحتماليه إكتشاف ثغره.
+                <br><br>
+                كان من ضمن النطاقات الفرعيه اللي جمعتها نطاق اسمه
+                <code>gib.target.com</code>
+                <br><br>
+                لما كنت بخش عليه كان بيحولني لصفحة تسجيل دخول في المسار 
+                <code>/homepage/cs_logon.asp</code>
+
+            </h5>
+        </div>
+        <br><hr><br>
+        <h2>2. إكتشاف نقطة الضعف</h2>
+        <div style="padding-right: 20px;">
+            <h5>
+                صفحات تسجيل الدخول من أكتر الأماكن المحببه بالنسبالي لأنها بتكون فيها نقاط ضعف كتيره زي الحقن و تخطي صلاحيات الوصول ... إلخ, 
+                هنتكلم هنا عن ثغرات الحقن عموما و خصوصا الـ
+                XSS.
+                <br><br>
+                الصفحه كانت بالشكل دا:
+                <br><br>
+                <img src="/assets/img/blog/3xss_1.png" alt="" style="width: 600px;">
+                <br><br>
+                ف هنبدأ نشوف حقول الإدخال اللي عندنا دي بيحصلها اي؟ بتنعكس فين في الصفحه؟ ينفع نحقن فيها ازاي؟ وكل الكلام الجميل دا
+                <br><br>
+                طبعا بعد عدة محاولات فاشله في الحقول اللي ظاهرة دي
+                انا كنت علي حافة الاستسلام و اني اسيب الصفحه دي و اروح ادور ف صفحة تانيه
+                بس لفت انتباهي ان في حقول مخفيه
+                <br><br>
+                <img src="/assets/img/blog/3xss_2.png" alt="">
+                <br><br>
+                و بعض المدخلات بيتم التحكم فيها من خلال جزء الـ
+                <code>location.search</code> 
+                او الـ
+                <code>query parameters</code>
+                ف ليه منحاولش نتعامل مع المدخلات دي كـ
+                <code>query parameter</code> 
+                ونحاول نتلاعب ف القيمة بتاعتهم؟
+            </h5>
+        </div>
+        <br><hr><br>
+        <h2>3. اختبار الثغرة</h2>
+        <div style="padding-right: 20px;">
+            <h5>
+                 الطلب:
+                <br><br>
+                <img src="/assets/img/blog/3xss_3.png" alt="">
+                <br><br>
+                 الرد:
+                <br><br>
+                <img src="/assets/img/blog/3xss_4.png" alt="">
+                <br><br>
+                بالفعل بقدر اتحكم ف قيمة المدخلات و بتنعكس في الصفحه بدون اي 
+                encoded
+                ومفيش اي WAF
+                <br><br>
+                <img src="/assets/img/memes/meme_1.png" alt="">
+                <br><br>
+                يلا بينا نكمل حقن ف باقي المدخلات و ونشوف هل مصابين بنفس الشئ ولا لا
+                <br><br>
+                الطلب:
+                <br><br>
+                <img src="/assets/img/blog/3xss_5.png" alt="">
+                <br><br>
+                الرد:
+                <br><br>
+                <img src="/assets/img/blog/3xss_6.png" alt="">
+                <br><br>
+                و ها قد كان و دلوقتي معانا اسهل 3
+                XSS
+                ف نفس الصفحه.
+                <br><br><hr><br>
+                بس يا فرحة ما تمت ال 3 حد تاني بلغهم قبلي 
+                :(
+                <br><br>
+                <img src="/assets/img/blog/3xss_7.png" alt="">
+                <br><br>
+                ولكن الحمدلله كل شئ نصيب و إن شاء الله تتعوض ف مره تانيه :)
+                <br><br>
+                بس كدا, كان معكم سويلم و السلام عليكم ورحمة الله وبركاته.
+                <br><br>
+                <div class="st-hero-social-links">
+                    <a href="https://facebook.com/swilam2752003" class="st-social-btn" target="_blank">
+                      <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://x.com/S0x404" class="st-social-btn" target="_blank">
+                      <i class="fab fa-x">x</i>
+                    </a>
+                    <a href="https://github.com/mohamedhamad1" class="st-social-btn" target="_blank">
+                      <i class="fab fa-github"></i>
+                    </a>
+                    <a href="https://linkedin.com/in/mohamed-hammad-369484204/" class="st-social-btn" target="_blank">
+                      <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="https://youtube.com/@BugFarmer-xd" class="st-social-btn" target="_blank">
+                      <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="https://medium.com/@midoeljoker30" class="st-social-btn" target="_blank">
+                      <i class="fab fa-medium"></i>
+                    </a>
+                  </div>
+            </h5>
+        </div>
+    </div>
+    <div class="st-height-b25 st-height-lg-b25"></div>
+</body>
+</html>
