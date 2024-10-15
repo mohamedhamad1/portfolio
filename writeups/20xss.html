@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Laralink">
+    <title>Swilam's night - 20 XSS</title>
+    <link rel="icon" href="/assets/img/favicon.png" />
+    <link rel="stylesheet" href="/assets/css/fontawesome.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.rtl.min.css"
+        integrity="sha384-gXt9imSW0VcJVHezoNQsP+TNrjYXoGcrqBZJpry9zJt8PCQjobwmhMGaDHTASo9N" crossorigin="anonymous">
+    <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+
+<body>
+    <div class="st-height-b100 st-height-lg-b80"></div>
+    <div class="container">
+        <div class="st-section-heading st-style1">
+            <h4 class="st-section-heading-title">صفقة XSSـات أورجانيك</h4>
+            <h2 class="st-section-heading-subtitle">صفقة XSSـات أورجانيك</h2>
+            <br><br><br>
+            <h5>السلام على من إتبع الهدى، و أشهد أن لا إله إلا الله و أن محمداً عبده ورسوله.</h5>
+            <h5>انا محمد حماد (سويلم)، مكتشف ثغرات نوب, فلاح كبير قد الدنيا, بحاول نوعا ما اكون سبب ف إستقلال المجتمع
+                العربي في مجال أمن المعلومات.</h5>
+            <hr>
+            <hr>
+            <hr>
+            <hr>
+            <hr>
+            <hr>
+        </div>
+        <div class="st-height-b25 st-height-lg-b25"></div>
+    </div>
+    <div class="container">
+        <h4>
+            الحمدلله قدرت إني أكتشف أكتر من 20 ثغرة
+            XSS
+            دفعه واحده
+            بإستخدام أسلوب بسيط و جميل هوضحه في المقالة إن شاء الرحيم
+            <br>
+            أهم النقط اللي هتكلم عنها هتكون :
+        </h4>
+        <ul style="padding-right: 50px;">
+            <li>جمع المعلومات</li>
+            <li>اكتشاف نقطة الضعف و إختبارها</li>
+            <li>أسلوب الأوتوميشن</li>
+        </ul>
+        <br>
+        <hr><br>
+        <h2>1. جمع المعلومات</h2>
+        <div style="padding-right: 20px;">
+            <h5>
+                عامل
+                script
+                بسيط قريب إن شاء الله هنزله 
+                GitHub 
+                ممكن يفيد حد
+                <br><br>
+                <img src="/assets/img/blog/20xss_5.png" alt="">
+                <br><br>
+                كل مهمته انه بيجمع الـ
+                Subdomains
+                من أهم 8 مصادر بتُستخدم في عملية الـ
+                Subdomain Enumeration
+                مقسومين لـ3 أدوات و 5 مواقع.
+                <br><br>
+                <ul>
+                    <li>Subfinder</li>
+                    <li>Assetfinder</li>
+                    <li>Findomain</li>
+                    <li>WayBack Archive</li>
+                    <li>crt.sh</li>
+                    <li>Anubis</li>
+                    <li>Urlscan</li>
+                    <li>OTX</li>
+                </ul>
+                وبعدين بيفلتر النطاقات اللي بترجع:
+                <br><br>
+                200:
+                بيكون عليهم 90% من الأختبار
+                <br>
+                403:
+                لزوم التخطي
+                <br>
+                404:
+                عشان اغلب النطاقات اللي ممكن تعمل عليها
+                Takeover
+                بترجع 404
+                <br>
+                3xx:
+                عشان بحب ادور علي ثغرات الـ
+                Open redirect
+                نظرا لأن أول باونتي كانت منها ف ليا قصة حب معاها
+                <br><br>
+                وبعدين بفلترهم بـ
+                httpx
+                من غير اي
+                flags
+                عشان لو هشغل اوتوميشن او حاجه.
+                <br><br>
+                و الـ
+                script
+                بعد كدا بيجمع الـ
+                Urls & Endpoints
+                من كل النطاقات اللي اتجمعت دي بإستخدام
+                waybackurls, gau.
+                <br><br>
+                دي ال 3 مراحل الأساسيه في الـ
+                script.
+                <br><br>
+                بعد كدا ببدأ أختبر النطاقات اللي بترجع 200
+                و بتبدأ رحلة البحث عن الـ
+                Functions
+                اللي ممكن نطلع منها بثغرات.
+            </h5>
+        </div>
+        <br>
+        <hr><br>
+        <h2>2. إكتشاف نقطة الضعف و إختبارها</h2>
+        <div style="padding-right: 20px;">
+            <h5>
+                في أحد النطاقات لاحظت إن لما أكتب اي حاجه في جزء الـ
+                <code>location.pathname</code>
+                بتنعكس في الصفحه في كود
+                javascript
+                بالشكل دا:
+                <br><br>
+                <img src="/assets/img/blog/20xss_1.png" alt="">
+                <br><br>
+                ملحوظة: جزء الـ
+                <code>location.path</code>
+                اللي بيكون بعد الـ
+                <code>/</code>
+                زي مثلا 
+                <code>https://example.com/swilam</code>
+                اهو 
+                <code>/swilam</code>
+                دا هو الـ
+                <code>location.path</code>
+                <br><br>
+                بدأ اعمل 
+                break
+                لكود الـ
+                JS 
+                دا بأني أعمل 
+                concatinate
+                للنص اللي اللي فيه 
+                <code>swilam</code>
+                ودا بأني اخلي النص دا مقسوم لـ3 أجزاء و هخلي جزء منهم هو الـ
+                payload
+                بتاعي اللي هيكون 
+                <code>swi'+confirm(1)+'lam</code>
+                , ف النتيجة هتكون:
+                <br><br>
+                <img src="/assets/img/blog/20xss_2.png" alt="">
+                <br><br>
+                <u style="color: red;">
+                    وهنا تظهر أهمية البرمجه!!!
+                </u>
+                <br><br>
+                بس الرحلة دي لم تنتهي بعد!!!
+            </h5>
+        </div>
+        <br><hr><br>
+        <h2>3. أسلوب الأوتوميشن</h2>
+        <div style="padding-right: 20px;">
+            <h5>
+                لقيت نفس الـ
+                XSS
+                في كمان اتنين 
+                Subdomains
+                مختلفين بنفس التكنيك و نفس الأنعكاس اللي بيحصل في الكود
+                <br><br>
+                ف هنا توقعت ان أكيد هلاقي نفس الثغره ف نطاقات تانيه
+                <br><br>
+                بس أكيد مش هجرب كل النطاقات دي يدوي!! طب و العمل؟
+                <br><br>
+                هنا قررت أعمل سكريبت اباصيله كل الـ
+                Subdomains
+                اللي جمعتها و هو يشوف شغله و ها قد كان.
+                <br><br>
+                بس عندي مشكلة في أداة
+                nuclei
+                ف مش هعرف أشتغل بيها بس ولا بيهمنا, الـ
+                bash script
+                هتقضى الغرض و زياده إن شاء الله.
+                <br><br>
+                <img src="/assets/img/blog/20xss_3.png" alt="">
+                <br><br>
+                دا الـ
+                script
+                الظريف كل فكرته اني هديله الـ
+                link
+                وليكن
+                <code>https://example.com</code>
+                و هيضيف له الـ
+                payload
+                دا
+                <code>/swilam'-confirm(1)-'</code>
+                عشان تكون النتيجة
+                <code>https://example.com/swilam'-confirm(1)-'</code>
+                ومن ثم اخزنها في 
+                target_url
+                <br><br>
+                و بعد كدا هستخدم
+                <code>curl -s -w "%{http_code}" -o response_body.txt "$target_url"</code>
+                عشان اتشيك علي الـ
+                responde code
+                هل هو 404 ولا لا
+                و احفظ الـ
+                repsonse body
+                عشان ادور فيه علي الـ
+                payload 
+                بتاعي هل إنعكس ولا لأ
+                ولو الشرطين اتحققوا يبقا بنسبه كبيره النطاق دا مصاب بنفس السيناريو.
+                و الـ
+                <code>-s</code>
+                عشان ميطلعش نتايج ع الشاشه و بعدين يمسح الفايل اللي حفظ النتايج لزوم البيرفيكشانيزم هههه.
+                <br><br>
+                <u style="color: red;">
+                    وهنا تظهر أهمية البرمجه كلاكيت تاني مره!!!
+                </u>
+                <br><br>
+                أكيد سألت نفسك ازاي هيباصي ملف فيه نطاقات كتيره لسكريبت بيستقبل نطاق واحد بس!
+                <br><br>
+                هقولك بسيطه 
+                <code>while read -r url; do ./myScript.sh $url >> potinxss.txt; done < Subdomains.txt</code>
+                و نسيبه يعيش مع نفسه, مسألة وقت....
+                <br><br>
+                <img src="/assets/img/blog/20xss_4.png" alt="" style="width: 1000px;">
+                <br><br>
+                وتارارارا...24 نطاق مصاب بنفس السيناريو و الحمدلله أنتهينا كدا من المقالة دي و إن شاء الله تكون أفادت ولو بشكل بسيط.
+                <br><br>
+                اللهم علمنا ما ينفعنا و أنفعنا بما علمتنا, والسلام عليكم ورحمة الله وبركاته.
+                <br><br>
+                <div class="st-hero-social-links">
+                    <a href="https://facebook.com/swilam2752003" class="st-social-btn" target="_blank">
+                      <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://x.com/S0x404" class="st-social-btn" target="_blank">
+                      <i class="fab fa-x">x</i>
+                    </a>
+                    <a href="https://github.com/mohamedhamad1" class="st-social-btn" target="_blank">
+                      <i class="fab fa-github"></i>
+                    </a>
+                    <a href="https://linkedin.com/in/mohamed-hammad-369484204/" class="st-social-btn" target="_blank">
+                      <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="https://youtube.com/@BugFarmer-xd" class="st-social-btn" target="_blank">
+                      <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="https://medium.com/@midoeljoker30" class="st-social-btn" target="_blank">
+                      <i class="fab fa-medium"></i>
+                    </a>
+                  </div>
+            </h5>
+        </div>
+    </div>
+    <div class="st-height-b25 st-height-lg-b25"></div>
+</body>
+</html>
